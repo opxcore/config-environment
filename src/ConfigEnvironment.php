@@ -14,7 +14,7 @@ class ConfigEnvironment implements \OpxCore\Interfaces\ConfigEnvironmentInterfac
      *
      * @return  bool
      */
-    public function load($path = null, $filename = '.env'): bool
+    public static function load($path = null, $filename = '.env'): bool
     {
         if($path === null) {
             $path = dirname(__DIR__, 4);
