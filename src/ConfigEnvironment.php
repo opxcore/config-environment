@@ -16,18 +16,22 @@ class ConfigEnvironment implements \OpxCore\Interfaces\ConfigEnvironmentInterfac
      */
     public static function load($path = null, $filename = '.env'): bool
     {
-        if($path === null) {
+        // If path is null, set path to project root. Typically this file is
+        // placed at `project_root/vendor/opxcore/config-environment/src/` folder
+        // so dirname(__DIR__, 4) will be `project_root/`
+        if ($path === null) {
             $path = dirname(__DIR__, 4);
         }
 
-        if(file_exists($path . DIRECTORY_SEPARATOR. $filename)) {
-            $environment = Dotenv::create($path, $filename);
+        if (!file_exists($path . DIRECTORY_SEPARATOR . $filename)) {
 
-            $environment->load();
-
-            return true;
+            return false;
         }
 
-        return false;
+        $environment = Dotenv::create($path, $filename);
+
+        $environment->load();
+
+        return true;
     }
 }
