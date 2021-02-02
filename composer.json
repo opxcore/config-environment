@@ -6,6 +6,11 @@
   ],
   "license": "MIT",
   "type": "library",
+  "homepage": "https://opxcore.com",
+  "support": {
+    "issues": "https://github.com/opxcore/config-environment/issues",
+    "source": "https://github.com/opxcore/config-environment"
+  },
   "require": {
     "php": "^7.4",
     "opxcore/config-environment-interface": "^1.0.1"
