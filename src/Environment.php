@@ -18,10 +18,20 @@ class Environment implements EnvironmentInterface
     /** @var array Set of environment variables */
     protected static array $environment = [];
 
+    /** @var string Path to environment file */
+    protected string $path;
+
+    public function __construct(?string $path = null)
+    {
+        // If path is null, set path to project root. Typically this file is
+        // placed at `project_root/vendor/opxcore/config-environment/src/` folder
+        // so dirname(__DIR__, 4) will be `project_root/`
+        $this->path = $path ?? dirname(__DIR__, 4);
+    }
+
     /**
      * Load configuration environment.
      *
-     * @param string|null $path Path to environment file
      * @param string $filename Environment filename
      * @param bool $safe Skip values if it already set in environment
      * @param bool $silent Whether is Exceptions would be thrown
@@ -30,30 +40,10 @@ class Environment implements EnvironmentInterface
      *
      * @throws EnvironmentException
      */
-    public static function load(?string $path = null, string $filename = '.env', bool $safe = false, bool $silent = false): bool
+    public function load(string $filename = '.env', bool $safe = false, bool $silent = false): bool
     {
-        // If path is null, set path to project root. Typically this file is
-        // placed at `project_root/vendor/opxcore/config-environment/src/` folder
-        // so dirname(__DIR__, 4) will be `project_root/`
-        if ($path === null) {
-            $path = dirname(__DIR__, 4);
-        }
+        $file = $this->path . DIRECTORY_SEPARATOR . $filename;
 
-        return self::loadEnvironment($path . DIRECTORY_SEPARATOR . $filename, $safe, $silent);
-    }
-
-    /**
-     * Handle environment loading workflow.
-     *
-     * @param string $file
-     * @param bool $safe
-     * @param bool $silent
-     *
-     * @return  bool
-     * @throws EnvironmentException
-     */
-    protected static function loadEnvironment(string $file, bool $safe, bool $silent): bool
-    {
         // Read file content
         $content = @file_get_contents($file);
 
@@ -83,7 +73,7 @@ class Environment implements EnvironmentInterface
 
             [$name, $value] = $var;
 
-            self::set($name, $value, $safe);
+            $this->set($name, $value, $safe);
         }
 
         return true;
@@ -98,7 +88,7 @@ class Environment implements EnvironmentInterface
      *
      * @return  bool
      */
-    public static function set(string $key, $value, bool $safe = false): bool
+    public function set(string $key, $value, bool $safe = false): bool
     {
         // Check if comment
         if (trim($key, " \r\t\v\0\n")[0] === '#') {
@@ -112,7 +102,7 @@ class Environment implements EnvironmentInterface
 
         // Try to parse string values
         if (is_string($value)) {
-            $value = self::parse($value);
+            $value = $this->parse($value);
         }
 
         self::$environment[$key] = $value;
@@ -127,7 +117,7 @@ class Environment implements EnvironmentInterface
      *
      * @return  array|bool|string|null|mixed
      */
-    protected static function parse(string $value)
+    protected function parse(string $value)
     {
         // first remove spaces and control characters
         $value = trim($value, " \r\t\v\0\n");
@@ -193,7 +183,7 @@ class Environment implements EnvironmentInterface
      *
      * @return  array|bool|string|null|mixed
      */
-    public static function get(string $key, $default = null)
+    public function get(string $key, $default = null)
     {
         if (!array_key_exists($key, self::$environment)) {
             if (is_callable($default)) {
@@ -209,13 +199,23 @@ class Environment implements EnvironmentInterface
     }
 
     /**
+     * Gets all environment.
+     *
+     * @return  array
+     */
+    public static function getEnvironment(): array
+    {
+        return self::$environment;
+    }
+
+    /**
      * Whether a offset exists.
      *
-     * @param mixed $key
+     * @param string $key
      *
      * @return bool
      */
-    public static function has($key): bool
+    public function has(string $key): bool
     {
         return array_key_exists($key, self::$environment);
     }
@@ -223,11 +223,11 @@ class Environment implements EnvironmentInterface
     /**
      * Offset to unset.
      *
-     * @param mixed $key
+     * @param string $key
      *
      * @return  void
      */
-    public static function unset($key): void
+    public function unset(string $key): void
     {
         unset(self::$environment[$key]);
     }
