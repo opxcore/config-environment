@@ -10,23 +10,17 @@
 
 namespace OpxCore\Tests\Config\Environment;
 
+use OpxCore\Config\Environment;
 use PHPUnit\Framework\TestCase;
 
-class SetGetTest extends TestCase
+class GetTest extends TestCase
 {
-    public function testGetDefault(): void
+    public function testGet(): void
     {
-        self::assertEquals(42, env('test', 42));
-    }
-
-    public function testGetDefaultNull(): void
-    {
-        self::assertEquals(null, env('test'));
-    }
-
-    public function testGetDefaultCallback(): void
-    {
-        self::assertEquals(3, env('test', static function () {
+        $env = new Environment();
+        self::assertEquals(42, $env->get('test', 42));
+        self::assertEquals(null, $env->get('test'));
+        self::assertEquals(3, $env->get('test', static function () {
             return 1 + 4 / 2;
         }));
     }

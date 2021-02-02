@@ -16,6 +16,8 @@ use PHPUnit\Framework\TestCase;
 
 class LoadEnvTest extends TestCase
 {
+    use Env;
+
     protected string $dir = __DIR__;
 
     /**
@@ -26,8 +28,7 @@ class LoadEnvTest extends TestCase
      */
     protected function loadEnv(string $filename): bool
     {
-        $dir = $this->dir . DIRECTORY_SEPARATOR . 'Fixtures';
-        return Environment::load($dir, $filename);
+        return self::$environment->load('Fixtures' . DIRECTORY_SEPARATOR . $filename);
     }
 
 
@@ -65,16 +66,10 @@ class LoadEnvTest extends TestCase
         self::assertTrue($this->loadEnv('3.env'));
     }
 
-    public function testLoadEnvEmptyPath(): void
-    {
-        $this->expectException(EnvironmentException::class);
-        Environment::load(null, '.env');
-    }
-
     public function testLoadEnvNoFile(): void
     {
         $this->expectException(EnvironmentException::class);
-        self::assertTrue($this->loadEnv('not.env'));
+        self::assertTrue($this->loadEnv('not . env'));
     }
 
     /**
@@ -82,6 +77,6 @@ class LoadEnvTest extends TestCase
      */
     public function testLoadEnvSilent(): void
     {
-        self::assertFalse(Environment::load(null, '.env', false, true));
+        self::assertFalse(self::$environment->load(' . env', false, true));
     }
 }

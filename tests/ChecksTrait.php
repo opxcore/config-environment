@@ -14,49 +14,51 @@ use OpxCore\Config\Environment;
 
 trait ChecksTrait
 {
+    use Env;
+
     protected function checkSafe($key, $value, $initial = 'initial'): void
     {
-        Environment::set($key, $initial);
+        self::$environment->set($key, $initial);
 
-        $result = Environment::set($key, $value, true);
+        $result = self::$environment->set($key, $value, true);
 
         self::assertFalse($result);
-        self::assertEquals($initial, Environment::get($key));
+        self::assertEquals($initial, self::$environment->get($key));
 
-        Environment::unset($key);
+        self::$environment->unset($key);
     }
 
     protected function checkUnsafe($key, $value, $initial = 'initial'): void
     {
-        Environment::set($key, $initial);
+        self::$environment->set($key, $initial);
 
-        $result = Environment::set($key, $value);
+        $result = self::$environment->set($key, $value);
 
         self::assertTrue($result);
-        self::assertEquals($value, Environment::get($key));
+        self::assertEquals($value, self::$environment->get($key));
 
-        Environment::unset($key);
+        self::$environment->unset($key);
     }
 
     protected function checkValue($key, $value, $expected): void
     {
-        $result = Environment::set($key, $value);
+        $result = self::$environment->set($key, $value);
 
         self::assertTrue($result);
-        self::assertEquals($expected, Environment::get($key));
+        self::assertEquals($expected, self::$environment->get($key));
 
-        Environment::unset($key);
+        self::$environment->unset($key);
     }
 
     protected function checkValueNotSet($key, $value): void
     {
-        Environment::unset($key);
+        self::$environment->unset($key);
 
-        $result = Environment::set($key, $value);
+        $result = self::$environment->set($key, $value);
 
         self::assertFalse($result);
-        self::assertFalse(Environment::has($key));
+        self::assertFalse(self::$environment->has($key));
 
-        Environment::unset($key);
+        self::$environment->unset($key);
     }
 }
