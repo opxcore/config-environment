@@ -12,32 +12,44 @@
 composer require opxcore/config-environment
 ```
 
+## Important notice
+
+All environment variables are stored in static property so any instance of environment would have access to the same set
+of environment variables.
+
 ## Usage
+
+```php
+use OpxCore\Config\Environment;
+
+$environment = new Environment($path);
+```
+
+where `$path` is directory where environment file is placed.
 
 ### Loading environment
 
-To load environment variables from file call `Environment::load($path, $filename)`, where `$path` is directory where
-environment file is placed and `$filename` is a name of file. **All variables would be stored locally, not affecting any
-of $_ENV, $_SERVER and so on**.
+To load environment variables from file call `$environment->load($filename)`, where `$filename` is a name of file. **All
+variables would be stored locally, not affecting any of $_ENV, $_SERVER and so on**.
 
-Additional arguments is `load($path, $filename, $safe, $silent)`. If `$safe` is set to `true` variables would not be
+Additional arguments is `load($filename, $safe, $silent)`. If `$safe` is set to `true` variables would not be
 overwritten if they are already present. If `$silent` is set to `true` no exceptions would be thrown. Function
 returns `true` if environment file wss processed successfully, `false` in case of any errors.
 
 ### Reading environment variables
 
-`Environment::get($key, $default)` returns environment variable if it set, otherwise returns value assigned to default
+`$environment->get($key, $default)` returns environment variable if it set, otherwise returns value assigned to default
 or return value of callable passed to as default.
 
-`Environment::has($key)` returns `true` is environment variable set, `false` otherwise.
+`$environment->has($key)` returns `true` is environment variable set, `false` otherwise.
 
 ### Manipulations
 
-`Environment::set($key, $value, $safe)` sets value to environment. If `$safe` is set to `true` variables would not be
+`$environment->set($key, $value, $safe)` sets value to environment. If `$safe` is set to `true` variables would not be
 overwritten if they are already present. Passed values of string type it would be parsed (see below), others would be
 set as is.
 
-`Environment::unset($key)` removes variable from environment.
+`$environment->unset($key)` removes variable from environment.
 
 ## Format
 
@@ -61,7 +73,7 @@ DB_CONNECTION="mysql"
 DB_HOST="127.0.0.1"
 ```
 
-Result of `Environment::get('DB_HOST')` would be `'127.0.0.1'`.
+Result of `$environment->get('DB_HOST')` would be `'127.0.0.1'`.
 
 ### Boolean
 
@@ -81,14 +93,18 @@ CACHE_DRIVER=null
 ```
 
 ### Array
-Arrays must start with `[` and ends with `]`. Items must be separated by commas. Each item would be parsed according 
-this rules. **Nested arrays are not supported**. 
+
+Arrays must start with `[` and ends with `]`. Items must be separated by commas. Each item would be parsed according
+this rules. **Nested arrays are not supported**.
+
 ```dotenv
 BROADCAST_DRIVER=[log,telegram]
 ```
 
 ### Numbers
+
 If value represents any of number format it would be converted to integer or float.
+
 ```dotenv
 COUNT=42
 MULTIPLIER=1.05
@@ -96,8 +112,9 @@ FLOAT=0.15E-10
 ```
 
 If parser would not recognise type of value, original string would be returned.
+
 ```dotenv
 APP_KEY=base64:0vqkPYSbwPm3MOzdxQJ76Ps6pouZRjN5xPx3b+dm628=
 ```
 
-Result of `Environment::get('APP_KEY')` would be `'base64:0vqkPYSbwPm3MOzdxQJ76Ps6pouZRjN5xPx3b+dm628='`.
+Result of `$environment->get('APP_KEY')` would be `'base64:0vqkPYSbwPm3MOzdxQJ76Ps6pouZRjN5xPx3b+dm628='`.
