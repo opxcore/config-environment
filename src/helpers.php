@@ -21,6 +21,18 @@ if (!function_exists('env')) {
      */
     function env(string $key, $default = null)
     {
-        return Environment::get($key, $default);
+        $env = Environment::getEnvironment();
+
+        if (!array_key_exists($key, $env)) {
+            if (is_callable($default)) {
+                $value = $default();
+            } else {
+                $value = $default;
+            }
+        } else {
+            $value = $env[$key];
+        }
+
+        return $value;
     }
 }
