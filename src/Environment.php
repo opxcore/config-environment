@@ -38,7 +38,7 @@ class Environment implements EnvironmentInterface
      *
      * @return  bool
      *
-     * @throws EnvironmentException
+     * @throws  EnvironmentException
      */
     public function load(string $filename = '.env', bool $safe = false, bool $silent = false): bool
     {
