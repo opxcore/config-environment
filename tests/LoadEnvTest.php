@@ -79,4 +79,19 @@ class LoadEnvTest extends TestCase
     {
         self::assertFalse(self::$environment->load(' . env', false, true));
     }
+
+    public function testAutoload():void
+    {
+        new Environment(__DIR__ .DIRECTORY_SEPARATOR.'Fixtures', '1.env');
+        self::assertEquals('local', env('APP_ENV'));
+    }
+
+    public function testAutoloadFail():void
+    {
+        $all = Environment::getEnvironment();
+
+        new Environment(__DIR__ .DIRECTORY_SEPARATOR.'Fixtures', 'no.env');
+
+        self::assertEquals($all, Environment::getEnvironment());
+    }
 }

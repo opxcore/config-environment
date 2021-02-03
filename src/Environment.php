@@ -21,12 +21,28 @@ class Environment implements EnvironmentInterface
     /** @var string Path to environment file */
     protected string $path;
 
-    public function __construct(?string $path = null)
+    /**
+     * Environment constructor.
+     *
+     * @param string|null $path
+     * @param string|null $env
+     *
+     * @return  void
+     */
+    public function __construct(?string $path = null, ?string $env = null)
     {
         // If path is null, set path to project root. Typically this file is
         // placed at `project_root/vendor/opxcore/config-environment/src/` folder
         // so dirname(__DIR__, 4) will be `project_root/`
         $this->path = $path ?? dirname(__DIR__, 4);
+
+        if ($env !== null) {
+            try {
+                $this->load($env);
+            } catch (EnvironmentException $e) {
+                // do nothing
+            }
+        }
     }
 
     /**
