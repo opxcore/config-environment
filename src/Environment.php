@@ -75,8 +75,8 @@ class Environment implements EnvironmentInterface
         $lines = explode("\n", $content);
 
         foreach ($lines as $number => $line) {
-            // Skip if empty line
-            if (trim($line) === '') {
+            // Skip if empty line or comment
+            if (trim($line) === '' || trim($line, " \r\t\v\0\n")[0] === '#') {
                 continue;
             }
 
