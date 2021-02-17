@@ -28,6 +28,8 @@ class Environment implements EnvironmentInterface
      * @param string|null $env
      *
      * @return  void
+     *
+     * @throws  EnvironmentException
      */
     public function __construct(?string $path = null, ?string $env = null)
     {
@@ -37,11 +39,7 @@ class Environment implements EnvironmentInterface
         $this->path = $path ?? dirname(__DIR__, 4);
 
         if ($env !== null) {
-            try {
-                $this->load($env);
-            } catch (EnvironmentException $e) {
-                // do nothing
-            }
+            $this->load($env);
         }
     }
 
