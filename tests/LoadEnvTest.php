@@ -88,10 +88,8 @@ class LoadEnvTest extends TestCase
 
     public function testAutoloadFail():void
     {
-        $all = Environment::getEnvironment();
+        $this->expectException(EnvironmentException::class);
 
         new Environment(__DIR__ .DIRECTORY_SEPARATOR.'Fixtures', 'no.env');
-
-        self::assertEquals($all, Environment::getEnvironment());
     }
 }
